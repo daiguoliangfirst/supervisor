@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#configuration
+PIDFILE="/var/run/supervisord.pid"
+COMMAND_START="/etc/init.d/supervisor"
+LOGDIR="/home/cc/log/ck_supervisor.log"
+
+function PROGRAM_START(){
+    $1 start;
+}
+
+function CHECK_PID(){
+    if ps -p $1 >/dev/null ;then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function LOG(){
+    echo "`date +'[%Y-%m-%d %H:%M:%S]'` $1" >> $LOGDIR
+}
+
+PID=`cat $PIDFILE`
+if CHECK_PID $PID ;then
+    LOG "supervisor ck ok"
+else
+    LOG "supervisor start"
+    PROGRAM_START $COMMAND_START
+fi
